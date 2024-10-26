@@ -1,14 +1,12 @@
 package tech.ada.products_api.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
-@ToString
+@Data
+@Schema
 public class ProductDTO {
     private String sku;
     private String name;

@@ -1,0 +1,8 @@
+-- INSERT INTO test_table (name, age, email)
+-- VALUES ('Alice', 30, 'alice@example.com');
+--
+-- INSERT INTO test_table (name, age, email)
+-- VALUES ('Bob', 25, 'bob@example.com');
+--
+-- INSERT INTO test_table (name, age, email)
+-- VALUES ('Charlie', 35, 'charlie@example.com');
