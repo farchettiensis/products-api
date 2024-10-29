@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 @Tag(name = "Product")
 public class ProductController {
     static List<ProductDTO> products = new ArrayList<>();
@@ -54,34 +55,54 @@ public class ProductController {
     @Operation(summary = "List all products", description = "Lists all products in the database.")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProductDTO> listAll() {
-        return products;
+        return productService.listAll();
     }
+
+//    @Operation(summary = "Update a product", description = "Updates a product in the database.")
+//    @PutMapping
+//    public ResponseEntity<ProductDTO> update(@RequestBody ProductDTO productDTO) {
+//        ProductDTO productDB = products.stream()
+//                .filter(p -> productDTO.getSku().equalsIgnoreCase(p.getSku()))
+//                .findFirst()
+//                .orElseThrow();
+//
+//        int index = products.indexOf(productDB);
+//        productDB.setPrice(productDTO.getPrice());
+//
+//        products.set(index, productDB);
+//
+//        return ResponseEntity.status(HttpStatus.ACCEPTED).body(productDB);
+//    }
 
     @Operation(summary = "Update a product", description = "Updates a product in the database.")
     @PutMapping
     public ResponseEntity<ProductDTO> update(@RequestBody ProductDTO productDTO) {
-        ProductDTO productDB = products.stream()
-                .filter(p -> productDTO.getSku().equalsIgnoreCase(p.getSku()))
-                .findFirst()
-                .orElseThrow();
-
-        int index = products.indexOf(productDB);
-        productDB.setPrice(productDTO.getPrice());
-
-        products.set(index, productDB);
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(productDB);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(productService.update(productDTO));
     }
 
     @Operation(summary = "Delete a product", description = "Deletes a product from the database.")
     @DeleteMapping("/{sku}")
     public ResponseEntity<Void> delete(@PathVariable("sku") String sku) {
-        ProductDTO productDB = products.stream()
-                .filter(p -> sku.equalsIgnoreCase(p.getSku()))
-                .findFirst()
-                .orElseThrow();
-
-        products.remove(productDB);
+        this.productService.delete(sku);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(summary = "Find a product by SKU", description = "Finds a product in the database by SKU.")
+    @GetMapping(value = "/sku/{sku}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ProductDTO> findProductBySku(@PathVariable("sku") String sku) {
+        return ResponseEntity.ok(productService.getProductBySku(sku));
+    }
+
+    // TODO: move this to a global exception handler
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleNoSuchElementException(EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @Operation(summary = "Find products by name", description = "Finds products in the database by name.")
+    @GetMapping(value = "/sku", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ProductDTO>> findByName(@RequestParam("name") String name) {
+        List<ProductDTO> products = productService.findByName(name);
+        return ResponseEntity.ok(products);
     }
 }
