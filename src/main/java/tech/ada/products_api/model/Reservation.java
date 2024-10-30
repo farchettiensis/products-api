@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import tech.ada.products_api.dto.ReservationDTO;
 
 @Entity
 @Table(name = "reservation",
@@ -31,4 +32,8 @@ public class Reservation {
     @Column(nullable = false)
     @Positive
     private int tableNumber;
+
+    public ReservationDTO toDTO() {
+        return ReservationDTO.fromReservation(this);
+    }
 }
