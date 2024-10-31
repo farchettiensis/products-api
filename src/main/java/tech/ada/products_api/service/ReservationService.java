@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,16 +60,6 @@ public class ReservationService {
                         .build());
     }
 
-//    public ReservationDTO getReservationById(Long id) {
-//        Optional<Reservation> optionalReservation = reservationRepository.findById(id);
-//
-//        if (optionalReservation.isPresent()) {
-//            return optionalReservation.get().toDTO();
-//        } else {
-//            throw new EntityNotFoundException("Reservation not found with ID: " + id);
-//        }
-//    }
-
     public ResponseDTO<List<ReservationDTO>> getAllReservations() {
         List<ReservationDTO> reservations = reservationRepository.findAll()
                 .stream()
@@ -95,6 +86,44 @@ public class ReservationService {
                 .build();
     }
 
+    public void deleteReservationByTableNumberAndTime(int tableNumber, LocalDate reservationDate, LocalTime reservationTime) {
+        Optional<Reservation> reservation = reservationRepository.findByTableNumberAndReservationTime_DateAndReservationTime_Time(tableNumber, reservationDate, reservationTime);
+
+        if (reservation.isPresent()) {
+            reservationRepository.delete(reservation.get());
+            ResponseDTO.<Void>builder()
+                    .message("Reservation deleted successfully for table " + tableNumber)
+                    .timestamp(LocalDateTime.now())
+                    .build();
+        } else {
+            ResponseDTO.<Void>builder()
+                    .message("No reservation found for table " + tableNumber)
+                    .timestamp(LocalDateTime.now())
+                    .build();
+        }
+    }
+
+    @Transactional
+    public ResponseDTO<Void> deleteReservationById(Long id) {
+        String deleteQuery = "DELETE FROM reservation WHERE id = ?1";
+
+        int rowsAffected = entityManager.createNativeQuery(deleteQuery)
+                .setParameter(1, id)
+                .executeUpdate();
+
+        if (rowsAffected > 0) {
+            return ResponseDTO.<Void>builder()
+                    .message("Reservation with ID " + id + " deleted successfully.")
+                    .timestamp(LocalDateTime.now())
+                    .build();
+        } else {
+            return ResponseDTO.<Void>builder()
+                    .message("No reservation found with ID " + id)
+                    .timestamp(LocalDateTime.now())
+                    .build();
+        }
+    }
+
     public ReservationDTO updateReservation(ReservationDTO reservationDTO) {
         Reservation existingReservation = reservationRepository.findById(reservationDTO.id())
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found with ID: " + reservationDTO.id()));
@@ -109,23 +138,5 @@ public class ReservationService {
 
         Reservation updatedReservation = reservationRepository.save(existingReservation);
         return updatedReservation.toDTO();
-    }
-
-    public void deleteReservationByTableNumberAndTime(int tableNumber, LocalDate reservationDate, LocalTime reservationTime) {
-        Reservation reservation = reservationRepository
-                .findByTableNumberAndReservationTime_DateAndReservationTime_Time(tableNumber, reservationDate, reservationTime)
-                .orElseThrow(() -> new EntityNotFoundException("Reservation not found for table number: " + tableNumber
-                        + " on date: " + reservationDate + " at time: " + reservationTime));
-
-        reservationRepository.delete(reservation);
-    }
-
-    @Transactional
-    public void deleteReservationById(Long id) {
-        String deleteQuery = "DELETE FROM reservation WHERE id = ?1";
-
-        entityManager.createNativeQuery(deleteQuery)
-                .setParameter(1, id)
-                .executeUpdate();
     }
 }
