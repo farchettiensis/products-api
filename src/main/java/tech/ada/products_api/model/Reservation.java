@@ -10,10 +10,10 @@ import tech.ada.products_api.dto.ReservationDTO;
 @Entity
 @Table(name = "reservation",
         indexes = {
-                @Index(name = "idx_reservation_date", columnList = "reservation_time_date"),
-                @Index(name = "idx_reservation_time", columnList = "reservation_time_time")
+                @Index(name = "idx_reservation_date", columnList = "date"),
+                @Index(name = "idx_reservation_time", columnList = "time")
         },
-        uniqueConstraints = @UniqueConstraint(columnNames = {"tableNumber", "reservation_time_date", "reservation_time_time"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"tableNumber", "date", "time"})
 )
 @Getter
 @Setter

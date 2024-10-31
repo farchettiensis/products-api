@@ -9,3 +9,10 @@ VALUES ('12345', 'Laptop', 'High-performance laptop', 999.99, 2.5),
        ('55566', 'Smart TV', '4K Smart TV with HDR', 799.99, 20.0),
        ('66677', 'Game Controller', 'Wireless game controller', 49.99, 0.2),
        ('77788', 'Power Bank', 'High-capacity power bank', 29.99, 0.2);
+
+INSERT INTO reservation (id, customer_name, table_number, date, time)
+VALUES (1, 'Dr. Jamil', 1, '2024-10-30', '18:30:00'),
+       (2, 'Manopla Protetora do Dr. Jamil', 2, '2024-10-30', '19:00:00'),
+       (3, 'Jamil Platão', 3, '2024-10-30', '20:00:00'),
+       (4, 'Jamil Decaído', 4, '2024-10-30', '18:00:00'),
+       (5, 'Jamil Cabal', 5, '2024-10-30', '17:30:00');
