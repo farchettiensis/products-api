@@ -51,13 +51,20 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{table-number}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<ResponseDTO<Void>> delete(
             @PathVariable("table-number") Integer tableNumber,
             @RequestHeader("reservation-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reservationDate,
             @RequestHeader("reservation-time") @DateTimeFormat(pattern = "HH:mm") LocalTime reservationTime) {
 
-        reservationService.deleteReservationByTableNumberAndTime(tableNumber, reservationDate, reservationTime);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        ResponseDTO<Void> response = reservationService.deleteReservationByTableNumberAndTime(tableNumber, reservationDate, reservationTime);
+        return ResponseEntity.status(response.getMessage().contains("successfully") ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<ResponseDTO<Void>> deleteById(@PathVariable Long id) {
+        ResponseDTO<Void> response = reservationService.deleteReservationById(id);
+        return ResponseEntity.ok(response);
     }
 }
 

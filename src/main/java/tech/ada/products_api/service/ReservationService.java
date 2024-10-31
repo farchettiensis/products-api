@@ -86,17 +86,17 @@ public class ReservationService {
                 .build();
     }
 
-    public void deleteReservationByTableNumberAndTime(int tableNumber, LocalDate reservationDate, LocalTime reservationTime) {
+    public ResponseDTO<Void> deleteReservationByTableNumberAndTime(int tableNumber, LocalDate reservationDate, LocalTime reservationTime) {
         Optional<Reservation> reservation = reservationRepository.findByTableNumberAndReservationTime_DateAndReservationTime_Time(tableNumber, reservationDate, reservationTime);
 
         if (reservation.isPresent()) {
             reservationRepository.delete(reservation.get());
-            ResponseDTO.<Void>builder()
+            return ResponseDTO.<Void>builder()
                     .message("Reservation deleted successfully for table " + tableNumber)
                     .timestamp(LocalDateTime.now())
                     .build();
         } else {
-            ResponseDTO.<Void>builder()
+            return ResponseDTO.<Void>builder()
                     .message("No reservation found for table " + tableNumber)
                     .timestamp(LocalDateTime.now())
                     .build();
