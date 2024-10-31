@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.ada.products_api.dto.ReservationDTO;
+import tech.ada.products_api.dto.ResponseDTO;
 import tech.ada.products_api.service.ReservationService;
 
 import java.time.LocalDate;
@@ -25,15 +26,15 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<ReservationDTO>> listAllReservations() {
-        List<ReservationDTO> reservations = reservationService.listAll();
+    @GetMapping("/list-all")
+    public ResponseEntity<ResponseDTO<List<ReservationDTO>>> listAllReservations() {
+        ResponseDTO<List<ReservationDTO>> reservations = reservationService.getAllReservations();
         return ResponseEntity.ok(reservations);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<ReservationDTO>> listAllByCustomerName(@RequestParam("customerName") String customerName) {
-        List<ReservationDTO> reservations = reservationService.listAll(customerName);
+    @GetMapping("/list-by-customer-name")
+    public ResponseEntity<ResponseDTO<List<ReservationDTO>>> listAllByCustomerName(@RequestParam("customerName") String customerName) {
+        ResponseDTO<List<ReservationDTO>> reservations = reservationService.getAllReservationsByCustomerName(customerName);
         return ResponseEntity.ok(reservations);
     }
 

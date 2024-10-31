@@ -1,12 +1,19 @@
 package tech.ada.products_api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public record ResponseDTO<T>(String message, LocalDateTime timestamp, T data) {
-    public ResponseDTO(String message, T data) {
-        this(message, LocalDateTime.now(), data);
-    }
+@Getter
+@Setter
+@Builder
+@JsonIgnoreProperties(ignoreUnknown = false)
+public class ResponseDTO<T> {
+
+    private String message;
+    private LocalDateTime timestamp = LocalDateTime.now();
+    private T data;
 }
